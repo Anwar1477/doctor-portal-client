@@ -1,17 +1,21 @@
-import { format } from "date-fns";
-import React from "react";
+import { format } from 'date-fns';
+import React from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import auth from '../../firebase.init';
 
-const AppointmentModal = ({ treatment, date,setTreatment }) => {
+const AppointmentModal = ({ treatment, date, setTreatment }) => {
   const { name, slots } = treatment;
+  const [user, loading, error] = useAuthState(auth);
+  console.log(user);
 
-  const handleAppointment = event => {
+  const handleAppointment = (event) => {
     event.preventDefault();
     const slot = event.target.slot.value;
     const name = event.target.name.value;
     const phone = event.target.phone.value;
     const email = event.target.email.value;
-    console.log(slot,name,phone,email);
-    setTreatment(null)
+    console.log(slot, name, phone, email);
+    setTreatment(null);
   };
   return (
     <div>
@@ -27,14 +31,17 @@ const AppointmentModal = ({ treatment, date,setTreatment }) => {
           <h3 class="font-bold text-lg text-secondary text-center">
             Booking for: {name}
           </h3>
-          <form onSubmit={handleAppointment} className="grid grid-cols-1 gap-3 justify-items-center mt-2">
+          <form
+            onSubmit={handleAppointment}
+            className="grid grid-cols-1 gap-3 justify-items-center mt-2"
+          >
             <input
               type="text"
               disabled
-              value={format(date, "PP")}
+              value={format(date, 'PP')}
               class="input input-bordered w-full max-w-xs"
             />
-            <select name='slot' class="select select-bordered w-full max-w-xs">
+            <select name="slot" class="select select-bordered w-full max-w-xs">
               {slots.map((slot) => (
                 <option value={slot}>{slot}</option>
               ))}
@@ -42,7 +49,7 @@ const AppointmentModal = ({ treatment, date,setTreatment }) => {
             <input
               type="text"
               name="name"
-              placeholder="Full Name"
+              value={user?.displayName}
               class="input input-bordered w-full max-w-xs"
             />
             <input
@@ -54,7 +61,7 @@ const AppointmentModal = ({ treatment, date,setTreatment }) => {
             <input
               type="email"
               name="email"
-              placeholder="Email"
+              value={user?.email}
               class="input input-bordered w-full max-w-xs"
             />
             <input
